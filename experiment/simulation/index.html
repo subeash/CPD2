@@ -1,101 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {font-family: Arial;}
+  <meta charset="utf-8"/>
 
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
+  <title>Heat exchanger simulation</title>
 
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
 
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
+  <link rel="stylesheet" href="./css/common.css">
 
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-}
-</style>
+ 
+  <link rel="stylesheet" href="css/index.css">
+
+  <script language="javascript" src="./js/process_sim_params.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/puCoCounterHeatExchanger.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/process_units.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/process_plot_info.js" type="text/javascript"></script>
+
+
+  <script language="javascript" src="./js/process_controller.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/process_interfacer.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/process_plotter_flot.js" type="text/javascript"></script>
+
+  <script language="javascript" src="./js/jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/jquery/jquery.flot.min-0.8.3.js" type="text/javascript"></script>
+  <script language="javascript" src="./js/jquery/jquery.flot.axislabels-20141122.js" type="text/javascript"></script>
+
+
+  <script language="javascript">
+   
+    window.onload = controller.openThisLab; 
+  </script>
+
 </head>
 <body>
-
-<p>"click" on the  button, to open the corresponding experiment.</p>
-
-<div class="tab">
-  <button class="tablinks" onclick="openCity(event, 'p1')" id="defaultOpen">Part 1 of the Experiment</button>
-  <button class="tablinks" onclick="openCity(event, 'p2')">Part 2 of the Experiment</button>
+<div id="div_page_header">
+ 
   
-</div>
+ 
+  <p>
+     Hit the Enter key or click out of the field to Change an input value.
 
-<div id="p1" class="tabcontent">
-  
- 						      <iframe id="heat"
-								title="heatexch"
-								width="1400"
-								height="800"
-								src="5a.html">
-							  </iframe>
-                            
-</div>
-
-<div id="p2" class="tabcontent">
-  
-  
- 						      <iframe id="heat"
-								title="heatexch"
-								width="1400"
-								height="800"
-								src="5b.html">
-							  </iframe>
-                             
-</div>
-
-
-
-<script>
-function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-</script>
+  </p>
+</div> 
+<div class="flex-container">
+  <div id="div_simFrame">
+        <div id="div_PLOTDIV_T_plot">
+        </div> 
+     <canvas id="canvas_CANVAS_hot" width="201" height="34"></canvas>
+    
+     <canvas id="canvas_CANVAS_cold" width="201" height="34"></canvas>
    
+     <input type="button" id="button_runButton" value="Run" onclick="interfacer.runThisLab()">
+     <input type="button" id="button_resetButton" value="Reset" onclick="interfacer.resetThisLab()">
+     <p id="field_cold_right_arrow">
+        &rarr;
+     </p>
+     <p id="field_hot_right_arrow">
+        &larr;
+     </p>
+     <p id="field_cold_left_arrow">
+        &rarr;
+     </p>
+     <p id="field_hot_left_arrow">
+        &larr;
+     </p>
+     <p id="field_hot_left_T">
+        333 K
+     </p>
+     <p id="field_hot_right_T">
+        333 K
+     </p>
+     <p id="field_cold_left_T">
+        333 K
+     </p>
+     <p id="field_cold_right_T">
+        333 K
+     </p>
+     <input type="button" id="button_copyData" value="Copy Data" onclick="interfacer.copyData(0)">
+  </div>
+  <div id="div_input_fields_group">
+   
+     <div id="div_radio_button_group">
+       
+        <label id="radio_counter-current_flow_LABEL" name="radio_of_div_radio_button_group">
+              <input type="radio" id="radio_counter-current_flow" name="radio_of_div_radio_button_group" checked onchange="processUnits[0].updateUIparams()">
+              <span id="radio_counter-current_flow_SPAN">counter flow</span>
+        </label>
+        <label id="radio_co-current_flow_LABEL" name="radio_of_div_radio_button_group">
+              <input type="radio" id="radio_co-current_flow" name="radio_of_div_radio_button_group" onchange="processUnits[0].updateUIparams()">
+              <span id="radio_co-current_flow_SPAN">Parallel flow</span>
+        </label>
+     </div> 
+     <p id="field_TinHot_label">
+        T in hot (300-380 K)
+     </p>
+     <input id="input_field_TinHot" value="360" onchange="interfacer.updateUIparams()">
+     <p id="field_TinCold_label">
+        T in cold (300-380 K)
+     </p>
+     <input id="input_field_TinCold" value="310" onchange="interfacer.updateUIparams()">
+     <p id="field_FlowHot_label">
+        Flow hot (0.15-4 kg/s)
+     </p>
+     <input id="input_field_FlowHot" value="0.5" onchange="interfacer.updateUIparams()">
+     <p id="field_FlowCold_label">
+        Flow cold (0.15-4 kg/s)
+     </p>
+     <input id="input_field_FlowCold" value="0.75" onchange="interfacer.updateUIparams()">
+     <p id="field_CpHot_label">
+        Cp hot (1-10 kJ/kg/K)
+     </p>
+     <input id="input_field_CpHot" value="4.2" onchange="interfacer.updateUIparams()">
+     <p id="field_CpCold_label">
+        Cp cold (1-10 kJ/kg/K)
+     </p>
+     <input id="input_field_CpCold" value="4.2" onchange="interfacer.updateUIparams()">
+     <p id="field_Ucoef_label">
+        U (0-10 kW/m<sup shift="-4">2</sup>/K)
+     </p>
+     <input id="input_field_Ucoef" value="0.6" onchange="interfacer.updateUIparams()">
+     <p id="field_Area_label">
+        Area (1-10 m<sup shift="-4">2</sup>)
+     </p>
+     <input id="input_field_Area" value="4.0" onchange="interfacer.updateUIparams()">
+     <p id="field_Diam_label">
+        tube diam (0.02-0.20 m)
+     </p>
+     <input id="input_field_Diam" value="0.15" onchange="interfacer.updateUIparams()">
+     <p id="field_length">
+        L (m) =
+     </p>
+     <p id="field_Reynolds" onchange="interfacer.updateUIparams()">
+        Re =
+     </p>
+  </div> 
+</div>
+
 </body>
-</html> 
+</html>
